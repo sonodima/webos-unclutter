@@ -1,0 +1,5 @@
+# Build Directory
+/bin
+
+# macOS Desktop Files
+.DS_Store
