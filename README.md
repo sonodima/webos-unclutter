@@ -58,6 +58,8 @@ For this reason, when building for macOS on a non-macOS machine, the build will 
 Setting up your TV is easy, and you don't need developer mode enabled.<br>
 Go in the network settings of your TV, enable the manual network configuration and set the DNS address to the IP address of the machine running <b>WebOS Unclutter</b>.
 
+### Having issues? [Manual DNS Settings](https://www.lg.com/us/support/help-library/manual-dns-settings-webos-CT10000020-20150576570174)
+
 ## Configuration
 
 <b>WebOS Unclutter</b> uses a configuration file to know what to remove from your TV.<br>
