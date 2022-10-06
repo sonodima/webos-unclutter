@@ -11,31 +11,51 @@ MACHO_ARM64_TARGET		= $(BINARY_TARGET)-arm64
 MACHO_X86_64_TARGET		= $(BINARY_TARGET)-x86_64
 
 BUILD_FLAGS = -ldflags "-s -w"
-UNAME = $(shell uname -s)
 
+# Enable experimental features for multi-arch container images
 export DOCKER_CLI_EXPERIMENTAL=enabled
+
+# If the GOOS environment variable is not set, default to the current OS
+ifeq ($(GOOS),)
+ifeq ($(OS),Windows_NT)
+GOOS = windows
+else
+GOOS = $(shell uname -s | tr A-Z a-z)
+endif
+endif
 
 
 .SILENT: build
 build:
-	echo "🔧 Build started"
-	
-  # macOS universal binaries contain both x86_64 and arm64 binaries
-ifeq ($(UNAME),Darwin)
+ifeq ($(GOOS), windows)
+  ################
+  ## Windows
+  ################
+	echo "🪟  Building for Windows"
+	go build -o $(BINARY_TARGET).exe $(BUILD_FLAGS) .
+else ifeq ($(GOOS), darwin)
+  ################
+  ## macOS
+  ################
 	echo "🍎 Building U2B for macOS"
-
 	echo "🔩 Compiling for arm64"
 	GOARCH=arm64 go build $(BUILD_FLAGS) -o $(MACHO_ARM64_TARGET) .
 	echo "🔩 Compiling for x86_64"
 	GOARCH=amd64 go build $(BUILD_FLAGS) -o $(MACHO_X86_64_TARGET) .
 
+  # Create a FAT binary (contains both arm64 and x86_64)
 	echo "📦 Merging build outputs into a FAT binary"
 	lipo -create -output $(BINARY_TARGET) $(MACHO_ARM64_TARGET) $(MACHO_X86_64_TARGET)
 
+  # Remove the THIN binaries
 	echo "🧼 Removing standalone arm64 and x86_64 binaries"
 	rm $(MACHO_ARM64_TARGET) $(MACHO_X86_64_TARGET)
 else
-	go build $(BUILD_FLAGS) -o $(BINARY_TARGET) .	
+  ################
+  ## Linux
+  ################
+	echo "🐧 Building for Linux"
+	go build -o $(BINARY_TARGET) $(BUILD_FLAGS) .
 endif
 	
 	echo "✅ \033[1;32mCompilation succeeded\033[0m"
