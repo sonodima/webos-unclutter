@@ -13,6 +13,10 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.19
+        cache: true
+
+    - name: Install Dependencies
+      run: go get .
 
     - name: Setup Directories
       run: mkdir deployment
@@ -23,3 +27,9 @@ jobs:
     - name: Build (linux/amd64)
       run: GOOS=linux GOARCH=amd64 make build && cp bin/wosu deployment/wosu-linux-amd64
   
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          deployment/wosu-linux-arm64
+          deployment/wosu-linux-amd64
