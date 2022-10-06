@@ -18,6 +18,15 @@ var blacklist []string
 
 // Function that handles DNS requests, and selectively blocks them or forwards them to the upstream DNS server.
 func handler(w dns.ResponseWriter, r *dns.Msg) {
+	if len(r.Question) == 0 {
+		log.Println("Received empty DNS request")
+		msg := &dns.Msg{}
+		msg.SetReply(r)
+		msg.Rcode = dns.RcodeNameError
+		w.WriteMsg(msg)
+		return
+	}
+
 	domain := r.Question[0].Name
 
 	// Check if domain name matches any of the regular expressions in the blocklist
