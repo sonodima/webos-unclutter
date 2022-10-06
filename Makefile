@@ -15,29 +15,41 @@ BUILD_FLAGS = -ldflags "-s -w"
 # Enable experimental features for multi-arch container images
 export DOCKER_CLI_EXPERIMENTAL=enabled
 
+
+# Get the OS of the machine that is building the program
+ifeq ($(OS),Windows_NT)
+	BLDOS = windows
+else
+	BLDOS = $(shell uname -s | tr '[:upper:]' '[:lower:]')
+endif
+
 # If the GOOS environment variable is not set, default to the current OS
 ifeq ($(GOOS),)
-ifeq ($(OS),Windows_NT)
-GOOS = windows
-else
-GOOS = $(shell uname -s | tr A-Z a-z)
-endif
+GOOS = $(BLDOS)
 endif
 
 
 .SILENT: build
 build:
 ifeq ($(GOOS), windows)
+
   ################
   ## Windows
   ################
+
 	echo "🪟  Building for Windows"
 	go build -o $(BINARY_TARGET).exe $(BUILD_FLAGS) .
+
 else ifeq ($(GOOS), darwin)
+
   ################
   ## macOS
   ################
+
+ifeq ($(BLDOS), darwin)
+  # If the current OS is macOS, we can build a U2B binary using LIPO.
 	echo "🍎 Building U2B for macOS"
+
 	echo "🔩 Compiling for arm64"
 	GOARCH=arm64 go build $(BUILD_FLAGS) -o $(MACHO_ARM64_TARGET) .
 	echo "🔩 Compiling for x86_64"
@@ -51,11 +63,20 @@ else ifeq ($(GOOS), darwin)
 	echo "🧼 Removing standalone arm64 and x86_64 binaries"
 	rm $(MACHO_ARM64_TARGET) $(MACHO_X86_64_TARGET)
 else
+  # If the current OS is not macOS, we must build a single THIN binary for the target architecture.
+	echo "🍎 Building for macOS/"
+	go build $(BUILD_FLAGS) -o $(BINARY_TARGET) .
+endif
+
+else
+
   ################
   ## Linux
   ################
+
 	echo "🐧 Building for Linux"
 	go build -o $(BINARY_TARGET) $(BUILD_FLAGS) .
+	
 endif
 	
 	echo "✅ \033[1;32mCompilation succeeded\033[0m"
@@ -92,7 +113,7 @@ clean:
 help:
 	echo
 	echo "\033[1;32mUSAGE:\033[0m"
-	echo "  make [target]"
+	echo "  [vars] make [target]"
 	echo
 	echo "\033[1;32mTARGETS:\033[0m"
 	echo "  build: Build the program"
@@ -100,3 +121,6 @@ help:
 	echo "  docker: Build and run the docker image"
 	echo "  clean: Clean the build directory"
 	echo "  help: Show this help message"
+	echo
+	echo "\033[1;32mVARS:\033[0m"
+	echo "  GOOS: The OS to build for (default: $(GOOS))"
