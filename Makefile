@@ -37,7 +37,7 @@ ifeq ($(GOOS), windows)
   ## Windows
   ################
 
-	echo "🪟  Building for Windows"
+	echo "🪟 Building for Windows"
 	go build -o $(BINARY_TARGET).exe $(BUILD_FLAGS) .
 
 else ifeq ($(GOOS), darwin)
@@ -64,7 +64,7 @@ ifeq ($(BLDOS), darwin)
 	rm $(MACHO_ARM64_TARGET) $(MACHO_X86_64_TARGET)
 else
   # If the current OS is not macOS, we must build a single THIN binary for the target architecture.
-	echo "🍎 Building for macOS/"
+	echo "🍎 Building for macOS"
 	go build $(BUILD_FLAGS) -o $(BINARY_TARGET) .
 endif
 
@@ -76,7 +76,7 @@ else
 
 	echo "🐧 Building for Linux"
 	go build -o $(BINARY_TARGET) $(BUILD_FLAGS) .
-	
+
 endif
 	
 	echo "✅ \033[1;32mCompilation succeeded\033[0m"

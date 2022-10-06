@@ -28,7 +28,7 @@ make docker
 
 ### Pre-built Binaries
 
-You can download the latest pre-built binaries for your architecture from the [releases page]()
+You can download the latest pre-built binaries for your OS and architecture from the [releases page](https://github.com/sonodima/webos-unclutter/releases)
 
 ### From Source
 
@@ -40,6 +40,18 @@ Building <b>WebOS Unclutter</b> from source is easy, but you have to make sure y
 ```bash
 make build
 ```
+
+You can also specify the `GOOS` and `GOARCH` environment variables to cross-compile for a different OS and architecture.
+
+```bash
+GOOS=windows GOARCH=arm64 make build
+```
+
+#### About macOS U2B
+
+The <kbd>mach-o</kbd> binary format allows the creation of binaries that can be run on both Intel and Apple Silicon _(M1)_ processors, however, this is not supported when cross-compiling from a different OS.
+
+For this reason, when building for macOS on a non-macOS machine, the build will only produce a <kbd>THIN</kbd> (single-architecture) binary for the current architecture.
 
 ## TV Setup
 
