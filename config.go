@@ -39,8 +39,8 @@ type Config struct {
 }
 
 // Gets the default config settings.
-func DefaultConfig() Config {
-	cfg := Config{}
+func DefaultConfig() *Config {
+	cfg := &Config{}
 	cfg.Network.ListenPort = 53
 	cfg.Network.Resolver = "8.8.8.8:53"
 	cfg.Logging.Blocked = true

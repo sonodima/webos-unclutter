@@ -11,10 +11,10 @@ import (
 )
 
 // Object that represents the configuration of the program.
-var config Config
+var config *Config
 
 // Generated list of domains regular expressions to block
-var blacklist []string
+var blacklist *BlackList
 
 // Sends an error response to the client.
 func sendError(w dns.ResponseWriter, r *dns.Msg) error {
@@ -35,17 +35,17 @@ func handler(w dns.ResponseWriter, r *dns.Msg) {
 	domain := r.Question[0].Name
 
 	// Check if domain name matches any of the regular expressions in the blocklist
-	for _, blocked := range blacklist {
-		exp, err := regexp.Compile(blocked)
+	for _, entry := range blacklist.Domains {
+		exp, err := regexp.Compile(entry.Expression)
 		if err != nil {
-			log.Println("Error compiling", blocked, "expression:", err)
+			log.Println("Error compiling", entry.Expression, "expression:", err)
 		}
 
 		// If the domain name matches the regular expression, send an error response
 		match := exp.MatchString(domain)
 		if err == nil && match {
 			if config.Logging.Blocked {
-				log.Println(color.RedString("[BLOCKED]"), domain)
+				log.Println(color.RedString("[BLOCKED]"), color.HiBlackString("["+entry.Comment+"]"), domain)
 			}
 
 			// Send an error response
@@ -102,7 +102,7 @@ func main() {
 
 	// Generate the list of domains to block according to the configuration
 	log.Println("Generating blacklist from configuration")
-	blacklist = BuildBlacklist(&config)
+	blacklist = NewBlackList(config)
 
 	log.Println("Using resolver:", config.Network.Resolver)
 
