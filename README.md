@@ -2,16 +2,33 @@
 
 > Remove the unwanted clutter from your WebOS TV.
 
+## Why?
+
+Modern TVs are great, but are full of bloatware and telemetry.<br>
+This project aims to non-destructively block the telemetry of the webOS services you don't use.
+
+## Supported TVs
+
+This project has been built around the telemetry registered on an European LG C1 on <kbd><b>webOS 6.0</b></kbd>
+
+Other webOS versions (or TVs in different regions) may communicate to different servers, and would probably require the addition of new rules in the blacklist.
+
+If you have a different webOS version, please run this program with `allowed=true` in the `logging` configuration section and open an issue with the logged output.
+
 ## Installation
 
 ### Docker
 
-Docker is the easiest and recommended way to run <b>WebOS Unclutter</b>.<br>
-You can use the following command to build and run the container:
+Docker is the recommended way to run <b>WebOS Unclutter</b>.<br>
+You can use the following command to build and run the container for your architecture:
 
 ```bash
 make docker
 ```
+
+### Pre-built Binaries
+
+You can download the latest pre-built binaries for your architecture from the [releases page]()
 
 ### From Source
 

@@ -10,6 +10,8 @@ func BuildBlacklist(cfg *Config) []string {
 		smartshare.lgtvsdp.com
 		sp.pluto.tv.
 		tags.tiqcdn.com.
+
+		ibs.lgappstv.com
 	*/
 
 	// lgtvonline.lge.com cannot be blocked, it is used for internet connection check
@@ -21,12 +23,15 @@ func BuildBlacklist(cfg *Config) []string {
 
 	if cfg.Blocking.HomeDashboard {
 		list = append(list, "\\b(?i)(eic)\\.recommend\\.lgtvcommon\\.com\\b") // eic.recommend.lgtvcommon.com
-		list = append(list, "\\b(?i)(eic)\\.service\\.lgtvcommon\\.com\\b")   // eic.service.lgtvcommon.com
 		list = append(list, "\\b(?i)(eic)\\.rdl\\.lgtvcommon\\.com\\b")       // eic.rdl.lgtvcommon.com
 		list = append(list, "\\b(?i)(eic)\\.homeprv\\.lgtvcommon\\.com\\b")   // eic.homeprv.lgtvcommon.com
 		list = append(list, "\\b(?i)(eic)\\.nudge\\.lgtvcommon\\.com\\b")     // eic.nudge.lgtvcommon.com
 
+		// Called a lot during user contract update
 		list = append(list, "\\blgtvsdp\\.com\\b") // region.lgtvsdp.com
+
+		// Called a lot during user contract update
+		list = append(list, "\\b(?i)(eic)\\.service\\.lgtvcommon\\.com\\b") // eic.service.lgtvcommon.com
 
 		list = append(list, "\\bibsstat\\.lgappstv\\.com\\b") // region.ibsstat.lgappstv.com
 
